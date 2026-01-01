@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class Mino_Z2 extends Mino {
     public Mino_Z2() {
-        Color c = new Color(249, 107, 255);
+        create(new Color(249, 107, 255));
     }
     public void setXY(int x, int y) {
         /*
@@ -15,7 +15,7 @@ public class Mino_Z2 extends Mino {
         b[0].x = x;
         b[0].y = y;
         b[1].x = b[0].x;
-        b[1].y = b[0].y + Block.size;
+        b[1].y = b[0].y - Block.size;
         b[2].x = b[0].x + Block.size;
         b[2].y = b[0].y;
         b[3].x = b[0].x + Block.size;
@@ -31,7 +31,7 @@ public class Mino_Z2 extends Mino {
         tempB[0].x = b[0].x;
         tempB[0].y = b[0].y;
         tempB[1].x = b[0].x;
-        tempB[1].y = b[0].y + Block.size;
+        tempB[1].y = b[0].y - Block.size;
         tempB[2].x = b[0].x + Block.size;
         tempB[2].y = b[0].y;
         tempB[3].x = b[0].x + Block.size;

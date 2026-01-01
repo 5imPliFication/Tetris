@@ -11,6 +11,7 @@ public class PlayManager {
     final int width = 360;
     final int height = 600;
     public static int leftX, rightX, topY, bottomY;
+    public boolean gameover = false;
 
     //minos
     Mino currentMino;
@@ -21,6 +22,15 @@ public class PlayManager {
 
     //others
     public static int dropInterval = 60;
+
+    //effects
+    public boolean effectEnable;
+    public int effectCounter;
+    public ArrayList<Integer> effectYList = new ArrayList<>();
+
+    //score
+    int level = 1;
+    int lines, score;
 
     public PlayManager() {
         leftX = (GamePanel.width / 2) - (width / 2);
@@ -62,6 +72,11 @@ public class PlayManager {
             staticList.add(currentMino.b[2]);
             staticList.add(currentMino.b[3]);
 
+            //check game over
+            if (currentMino.b[0].x == minoStartX && currentMino.b[0].y == minoStartY) {
+                gameover = true;
+            }
+
             currentMino.deactivate = false;
 
             currentMino = nextMino;
@@ -79,26 +94,39 @@ public class PlayManager {
         int x = leftX;
         int y = topY;
         int blockCount = 0;
+        int lineCount = 0;
         while (x < rightX && y < bottomY) {
-            x += Block.size;
-            for (Block block : staticList) {
-                if (block.x == x && block.y == y) {
+            for (int i = 0; i < staticList.size(); i++) {
+                if (staticList.get(i).x == x && staticList.get(i).y == y) {
                     //count the already placed block
                     blockCount++;
                 }
             }
+            x += Block.size;
             if (x == rightX) {
-
                 if (blockCount == 12) {
+                    effectEnable = true;
+                    effectYList.add(y);
                     for (int i = staticList.size() - 1; i > -1; i--) {
                         //remove all block if the line is filled
                         if (staticList.get(i).y == y) {
                             staticList.remove(i);
                         }
                     }
+                    lineCount++;
+                    lines++;
+                    //drop speed, score mechanic
+                    if (lines % 10 == 0 && dropInterval > 1) {
+                        level++;
+                        if (dropInterval > 10) {
+                            dropInterval -= 5;
+                        } else {
+                            dropInterval--;
+                        }
+                    }
                     for (int i = 0; i < staticList.size(); i++) {
                         // when line removed, blocks from above need to be place down to the bottom
-                        if (staticList.get(i).y == y) {
+                        if (staticList.get(i).y < y) {
                             staticList.get(i).y += Block.size;
                         }
                     }
@@ -108,6 +136,10 @@ public class PlayManager {
                 x = leftX;
                 y += Block.size;
             }
+        }
+        if (lineCount > 0) {
+            int singleLineScore = 10 * level;
+            score += singleLineScore * lineCount;
         }
     }
 
@@ -125,23 +157,59 @@ public class PlayManager {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2d.drawString("NEXT", x + 60, y + 40);
 
+        //draw score board
+        g2d.drawRect(x, topY, 250, 300);
+        x += 40;
+        y = topY + 90;
+        g2d.drawString("Level: " + level, x, y);
+        y += 70;
+        g2d.drawString("Lines: " + lines, x, y);
+        y += 70;
+        g2d.drawString("Score: " + score, x, y);
+
         // draw the current mino brick
         if (currentMino != null) {
             currentMino.draw(g2d);
         }
         nextMino.draw(g2d);
         //draw static block
-        for (Block block : staticList) {
-            block.draw(g2d);
+        for (int i = 0; i < staticList.size(); i++) {
+            staticList.get(i).draw(g2d);
         }
 
         //pause
         g2d.setColor(Color.WHITE);
         g2d.setFont(new Font("Arial", Font.BOLD, 50));
+        if (gameover) {
+            x = leftX + 25;
+            y = topY + 320;
+            g2d.drawString("GAME OVER", x, y);
+        }
         if (KeyHandler.pause) {
             x = leftX + 70;
             y = topY + 320;
             g2d.drawString("PAUSED!", x, y);
         }
+
+        //effect
+        if (effectEnable) {
+            effectCounter++;
+            g2d.setColor(Color.white);
+            for (int i = 0; i < effectYList.size(); i++) {
+                g2d.fillRect(leftX, effectYList.get(i), width, Block.size);
+            }
+            if (effectCounter == 12) {
+                effectEnable = false;
+                effectCounter = 0;
+                effectYList.clear();
+            }
+        }
+
+        //draw game title
+        x = 35;
+        y = topY + 320;
+        g2d.setColor(Color.white);
+        g2d.setFont(new Font("Arial", Font.ITALIC, 60));
+        g2d.drawString("Tetris", x, y);
     }
 }

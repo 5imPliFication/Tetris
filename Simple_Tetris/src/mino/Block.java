@@ -13,7 +13,7 @@ public class Block extends Rectangle {
 
     public void draw(Graphics2D g2d) {
         g2d.setColor(color);
-        g2d.fillRect(x, y, size - 4, size - 4);
+        g2d.fillRect(x + 2, y + 2, size - 4, size - 4);
     }
 
 }

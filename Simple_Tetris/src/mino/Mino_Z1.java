@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class Mino_Z1 extends Mino {
     public Mino_Z1() {
-        Color c = new Color(152, 56, 255);
+        create(new Color(152, 56, 255));
     }
     public void setXY(int x, int y) {
         /*

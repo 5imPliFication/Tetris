@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class Mino_Bar extends Mino{
     public Mino_Bar() {
-        Color color = new Color(0, 60, 255);
+        create(new Color(0, 60, 255));
     }
     public void setXY(int x, int y) {
         /*
@@ -28,7 +28,7 @@ public class Mino_Bar extends Mino{
         tempB[0].y = b[0].y;
         tempB[1].x = b[0].x - Block.size;
         tempB[1].y = b[0].y;
-        tempB[2].x = b[0].x - Block.size;
+        tempB[2].x = b[0].x + Block.size;
         tempB[2].y = b[0].y;
         tempB[3].x = b[0].x + Block.size*2;
         tempB[3].y = b[0].y;
