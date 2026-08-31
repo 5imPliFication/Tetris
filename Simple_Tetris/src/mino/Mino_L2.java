@@ -2,17 +2,13 @@ package mino;
 
 import java.awt.*;
 
-public class Mino_L2 extends Mino{
+public class Mino_L2 extends Mino {
     public Mino_L2() {
-        create(new Color(107, 255, 115));
+        create(new Color(0, 0, 240)); // Guideline Blue
     }
 
+    @Override
     public void setXY(int x, int y) {
-        /*
-            o
-            o
-          o o
-         */
         b[0].x = x;
         b[0].y = y;
         b[1].x = b[0].x;
@@ -23,12 +19,8 @@ public class Mino_L2 extends Mino{
         b[3].y = b[0].y + Block.size;
     }
 
+    @Override
     public void getDirection1() {
-        /*
-            o
-            o
-          o o
-         */
         tempB[0].x = b[0].x;
         tempB[0].y = b[0].y;
         tempB[1].x = b[0].x;
@@ -37,15 +29,10 @@ public class Mino_L2 extends Mino{
         tempB[2].y = b[0].y + Block.size;
         tempB[3].x = b[0].x - Block.size;
         tempB[3].y = b[0].y + Block.size;
-
-        updateXY(1);
     }
 
+    @Override
     public void getDirection2() {
-        /*
-        o
-        o o o
-         */
         tempB[0].x = b[0].x;
         tempB[0].y = b[0].y;
         tempB[1].x = b[0].x + Block.size;
@@ -54,16 +41,10 @@ public class Mino_L2 extends Mino{
         tempB[2].y = b[0].y;
         tempB[3].x = b[0].x - Block.size;
         tempB[3].y = b[0].y - Block.size;
-
-        updateXY(2);
     }
 
+    @Override
     public void getDirection3() {
-        /*
-            o o
-            o
-            o
-         */
         tempB[0].x = b[0].x;
         tempB[0].y = b[0].y;
         tempB[1].x = b[0].x;
@@ -72,15 +53,10 @@ public class Mino_L2 extends Mino{
         tempB[2].y = b[0].y - Block.size;
         tempB[3].x = b[0].x + Block.size;
         tempB[3].y = b[0].y - Block.size;
-
-        updateXY(3);
     }
 
+    @Override
     public void getDirection4() {
-        /*
-        o o o
-            o
-         */
         tempB[0].x = b[0].x;
         tempB[0].y = b[0].y;
         tempB[1].x = b[0].x - Block.size;
@@ -89,7 +65,5 @@ public class Mino_L2 extends Mino{
         tempB[2].y = b[0].y;
         tempB[3].x = b[0].x + Block.size;
         tempB[3].y = b[0].y + Block.size;
-
-        updateXY(4);
     }
 }

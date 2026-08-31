@@ -1,228 +1,240 @@
 package mino;
 
-import main.KeyHandler;
 import main.PlayManager;
+import main.SoundManager;
 
 import java.awt.*;
 
 public class Mino {
-    public Block b[] = new Block[4];
-    public Block tempB[] = new Block[4];
-    int autoDropCounter = 0;
-    public int direction = 1; //default position
-    private boolean leftCollision, rightCollision, downCollision;
-    public boolean active = true, deactivate;
-    int deactivateCounter = 0;
-
+    public Block[] b = new Block[4];
+    public Block[] tempB = new Block[4];
+    public int direction = 1;
+    public boolean active = true;
+    public boolean deactivate = false;
+    public int deactivateCounter = 0;
+    public static final int MAX_LOCK_DELAY = 35;
 
     public void create(Color color) {
-        b[0] = new Block(color);
-        b[1] = new Block(color);
-        b[2] = new Block(color);
-        b[3] = new Block(color);
-        tempB[0] = new Block(color);
-        tempB[1] = new Block(color);
-        tempB[2] = new Block(color);
-        tempB[3] = new Block(color);
+        for (int i = 0; i < 4; i++) {
+            b[i] = new Block(color);
+            tempB[i] = new Block(color);
+        }
     }
 
     public void setXY(int x, int y) {
     }
 
-    public void updateXY(int direction) {
-        checkRotationCollision();
-        if (!leftCollision && !rightCollision && !downCollision) {
-            this.direction = direction;
-            b[0].x = tempB[0].x;
-            b[0].y = tempB[0].y;
-            b[1].x = tempB[1].x;
-            b[1].y = tempB[1].y;
-            b[2].x = tempB[2].x;
-            b[2].y = tempB[2].y;
-            b[3].x = tempB[3].x;
-            b[3].y = tempB[3].y;
+    public void getDirection1() {}
+    public void getDirection2() {}
+    public void getDirection3() {}
+    public void getDirection4() {}
+
+    public void applyDirection(int dir) {
+        switch (dir) {
+            case 1 -> getDirection1();
+            case 2 -> getDirection2();
+            case 3 -> getDirection3();
+            case 4 -> getDirection4();
         }
     }
 
-    public void getDirection1() {
-    }
-
-    public void getDirection2() {
-    }
-
-    public void getDirection3() {
-    }
-
-    public void getDirection4() {
-    }
-
-    private void checkStaticBlockCollision() {
-        for (int i = 0; i < PlayManager.staticList.size(); i++) {
-            int targetX = PlayManager.staticList.get(i).x;
-            int targetY = PlayManager.staticList.get(i).y;
-            //check down
-            for (int j = 0; j < b.length; j++) {
-                if (b[j].x == targetX && b[j].y + Block.size == targetY) {
-                    downCollision = true;
-                }
-            }
-            //check left
-            for (int j = 0; j < b.length; j++) {
-                if (b[j].x - Block.size == targetX && b[j].y == targetY) {
-                    leftCollision = true;
-                }
-            }
-            //check right
-            for (int j = 0; j < b.length; j++) {
-                if (b[j].x + Block.size == targetX && b[j].y == targetY) {
-                    rightCollision = true;
-                }
-            }
-        }
-    }
-
-    public void checkMovementCollision() {
-        leftCollision = false;
-        rightCollision = false;
-        downCollision = false;
-        checkStaticBlockCollision();
-        //check collision
-        //left wall
-        for (int i = 0; i < b.length; i++) {
-            if (b[i].x == PlayManager.leftX) {
-                leftCollision = true;
-            }
-        }
-        //right wall
-        for (int i = 0; i < b.length; i++) {
-            if (b[i].x + Block.size == PlayManager.rightX) {
-                rightCollision = true;
-            }
-        }
-        //bottom
-        for (int i = 0; i < b.length; i++) {
-            if (b[i].y + Block.size == PlayManager.bottomY) {
-                downCollision = true;
-            }
-        }
-    }
-
-
-    public void checkRotationCollision() {
-        leftCollision = false;
-        rightCollision = false;
-        downCollision = false;
-        checkStaticBlockCollision();
-        //check collision
-        //left wall
-        for (int i = 0; i < b.length; i++) {
-            if (tempB[i].x < PlayManager.leftX) {
-                leftCollision = true;
-            }
-        }
-        //right wall
-        for (int i = 0; i < b.length; i++) {
-            if (tempB[i].x + Block.size > PlayManager.rightX) {
-                rightCollision = true;
-            }
-        }
-        //bottom
-        for (int i = 0; i < b.length; i++) {
-            if (tempB[i].y + Block.size > PlayManager.bottomY) {
-                downCollision = true;
-            }
-        }
-    }
-
-    public void update() {
-        // control the mino
-        if (deactivate) {
-            deactivating();
-        }
-        if (KeyHandler.up) {
-            System.out.println("CHANGE DIRECTION!");
-            switch (direction) {
-                case 1:
-                    getDirection2();
-                    break;
-                case 2:
-                    getDirection3();
-                    break;
-                case 3:
-                    getDirection4();
-                    break;
-                case 4:
-                    getDirection1();
-                    break;
-            }
-            KeyHandler.up = false;
-        }
-        checkMovementCollision();
-        if (KeyHandler.down) {
-            if (!downCollision) {
-                System.out.println("DOWN");
-                b[0].y += Block.size;
-                b[1].y += Block.size;
-                b[2].y += Block.size;
-                b[3].y += Block.size;
-                autoDropCounter = 0;
-            }
-            KeyHandler.down = false;
-        }
-        if (KeyHandler.left) {
-            if (!leftCollision) {
-                System.out.println("LEFT");
-                b[0].x -= Block.size;
-                b[1].x -= Block.size;
-                b[2].x -= Block.size;
-                b[3].x -= Block.size;
-            }
-            KeyHandler.left = false;
-        }
-        if (KeyHandler.right) {
-            if (!rightCollision) {
-                System.out.println("RIGHT");
-                b[0].x += Block.size;
-                b[1].x += Block.size;
-                b[2].x += Block.size;
-                b[3].x += Block.size;
-            }
-            KeyHandler.right = false;
-        }
-        if (downCollision) {
-            deactivate = true;
+    public boolean rotate(PlayManager pm, boolean clockwise) {
+        int nextDir;
+        if (clockwise) {
+            nextDir = (direction == 4) ? 1 : direction + 1;
         } else {
-            // gravity
-            autoDropCounter++;
-            if (autoDropCounter == PlayManager.dropInterval) {
-                b[0].y += Block.size;
-                b[1].y += Block.size;
-                b[2].y += Block.size;
-                b[3].y += Block.size;
-                autoDropCounter = 0;
+            nextDir = (direction == 1) ? 4 : direction - 1;
+        }
+
+        // Generate tempB positions for candidate rotation
+        applyDirection(nextDir);
+
+        // Wall kick offsets to test: (0,0), (-1,0), (+1,0), (-2,0), (+2,0), (0,-1)
+        int[][] kickOffsets = {
+            {0, 0},
+            {-Block.size, 0},
+            {Block.size, 0},
+            {-Block.size * 2, 0},
+            {Block.size * 2, 0},
+            {0, -Block.size}
+        };
+
+        for (int[] offset : kickOffsets) {
+            if (isValidPlacement(pm, offset[0], offset[1])) {
+                this.direction = nextDir;
+                for (int i = 0; i < 4; i++) {
+                    b[i].x = tempB[i].x + offset[0];
+                    b[i].y = tempB[i].y + offset[1];
+                }
+                if (deactivate) {
+                    deactivateCounter = 0; // reset lock delay on successful rotation
+                }
+                SoundManager.getInstance().playRotate();
+                return true;
             }
+        }
+
+        // Rotation blocked: restore tempB to current direction
+        applyDirection(direction);
+        return false;
+    }
+
+    private boolean isValidPlacement(PlayManager pm, int offsetX, int offsetY) {
+        for (int i = 0; i < 4; i++) {
+            int tx = tempB[i].x + offsetX;
+            int ty = tempB[i].y + offsetY;
+            if (!pm.isInsidePlayArea(tx, ty) || pm.isCellOccupied(tx, ty)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean canMoveLeft(PlayManager pm) {
+        for (int i = 0; i < 4; i++) {
+            int tx = b[i].x - Block.size;
+            int ty = b[i].y;
+            if (!pm.isInsidePlayArea(tx, ty) || pm.isCellOccupied(tx, ty)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean canMoveRight(PlayManager pm) {
+        for (int i = 0; i < 4; i++) {
+            int tx = b[i].x + Block.size;
+            int ty = b[i].y;
+            if (!pm.isInsidePlayArea(tx, ty) || pm.isCellOccupied(tx, ty)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean canMoveDown(PlayManager pm) {
+        for (int i = 0; i < 4; i++) {
+            int tx = b[i].x;
+            int ty = b[i].y + Block.size;
+            if (!pm.isInsidePlayArea(tx, ty) || pm.isCellOccupied(tx, ty)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void moveLeft(PlayManager pm) {
+        if (canMoveLeft(pm)) {
+            for (int i = 0; i < 4; i++) {
+                b[i].x -= Block.size;
+            }
+            if (deactivate) deactivateCounter = 0;
+            SoundManager.getInstance().playMove();
         }
     }
 
-    private void deactivating() {
-        deactivateCounter++;
-        // wait 45 frame until deactivate
-        if (deactivateCounter == 45) {
-            deactivateCounter = 0;
-            checkMovementCollision();
-            if (downCollision) {
-                active = false;
+    public void moveRight(PlayManager pm) {
+        if (canMoveRight(pm)) {
+            for (int i = 0; i < 4; i++) {
+                b[i].x += Block.size;
+            }
+            if (deactivate) deactivateCounter = 0;
+            SoundManager.getInstance().playMove();
+        }
+    }
+
+    public boolean moveDown(PlayManager pm) {
+        if (canMoveDown(pm)) {
+            for (int i = 0; i < 4; i++) {
+                b[i].y += Block.size;
+            }
+            return true;
+        } else {
+            deactivate = true;
+            return false;
+        }
+    }
+
+    public void hardDrop(PlayManager pm) {
+        int distance = getDropDistance(pm);
+        for (int i = 0; i < 4; i++) {
+            b[i].y += distance * Block.size;
+        }
+        active = false;
+        SoundManager.getInstance().playHardDrop();
+    }
+
+    public int getDropDistance(PlayManager pm) {
+        int distance = 0;
+        while (true) {
+            int testYOffset = (distance + 1) * Block.size;
+            boolean canFall = true;
+            for (int i = 0; i < 4; i++) {
+                int tx = b[i].x;
+                int ty = b[i].y + testYOffset;
+                if (!pm.isInsidePlayArea(tx, ty) || pm.isCellOccupied(tx, ty)) {
+                    canFall = false;
+                    break;
+                }
+            }
+            if (canFall) {
+                distance++;
+            } else {
+                break;
+            }
+        }
+        return distance;
+    }
+
+    public void update(PlayManager pm) {
+        if (deactivate) {
+            deactivateCounter++;
+            if (!canMoveDown(pm)) {
+                if (deactivateCounter >= MAX_LOCK_DELAY) {
+                    active = false;
+                }
+            } else {
+                deactivate = false;
+                deactivateCounter = 0;
             }
         }
     }
 
     public void draw(Graphics2D g2d) {
-        // a single mino brick
-        g2d.setColor(b[0].color);
-        int margin = 4;
-        g2d.fillRect(b[0].x + margin/2, b[0].y + margin/2, Block.size - (margin), Block.size - (margin));
-        g2d.fillRect(b[1].x + margin/2, b[1].y + margin/2, Block.size - (margin), Block.size - (margin));
-        g2d.fillRect(b[2].x + margin/2, b[2].y + margin/2, Block.size - (margin), Block.size - (margin));
-        g2d.fillRect(b[3].x + margin/2, b[3].y + margin/2, Block.size - (margin), Block.size - (margin));
+        for (int i = 0; i < 4; i++) {
+            b[i].draw(g2d);
+        }
+    }
+
+    public void drawGhost(Graphics2D g2d, PlayManager pm) {
+        int distance = getDropDistance(pm);
+        if (distance > 0) {
+            int yOffset = distance * Block.size;
+            for (int i = 0; i < 4; i++) {
+                b[i].drawGhost(g2d, b[i].x, b[i].y + yOffset);
+            }
+        }
+    }
+
+    public void drawPreview(Graphics2D g2d, int centerX, int centerY) {
+        // Ensure shape geometry is initialized (setXY may not have been called on preview minos)
+        setXY(0, 0);
+
+        int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+        int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+        for (int i = 0; i < 4; i++) {
+            minX = Math.min(minX, b[i].x);
+            maxX = Math.max(maxX, b[i].x + Block.size);
+            minY = Math.min(minY, b[i].y);
+            maxY = Math.max(maxY, b[i].y + Block.size);
+        }
+        int shapeW = maxX - minX;
+        int shapeH = maxY - minY;
+        int offsetX = centerX - (minX + shapeW / 2);
+        int offsetY = centerY - (minY + shapeH / 2);
+
+        for (int i = 0; i < 4; i++) {
+            b[i].drawAt(g2d, b[i].x + offsetX, b[i].y + offsetY);
+        }
     }
 }
